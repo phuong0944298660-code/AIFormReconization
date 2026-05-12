@@ -86,3 +86,4 @@ backend/test-*.pdf
 # Maven local repository cache (if placed inside project)
 %MAVEN_HOME%/
 backend/%MAVEN_HOME%/
+.gstack/

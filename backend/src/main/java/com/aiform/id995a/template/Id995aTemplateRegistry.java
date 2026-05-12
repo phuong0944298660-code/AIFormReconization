@@ -35,7 +35,14 @@ public class Id995aTemplateRegistry {
       new TemplateField("previousShortTermStudyDetails", "短期课程详情", 3, 0.300, 0.820, 0.560, 0.095, 0.010),
       new TemplateField("declarationSignature", "声明签名", 4, 0.570, 0.905, 0.300, 0.050, 0.012),
       new TemplateField("declarationDate", "声明日期", 4, 0.115, 0.905, 0.210, 0.050, 0.010),
-      new TemplateField("dependantPartB", "受养人乙部", 5, 0.070, 0.070, 0.860, 0.260, 0.010)
+      new TemplateField("dependantPartB", "受养人乙部", 5, 0.070, 0.070, 0.860, 0.260, 0.010),
+      new TemplateField("dependantName", "受养人姓名", 5, 0.080, 0.150, 0.400, 0.040, 0.010),
+      new TemplateField("dependantSex", "受养人性别", 5, 0.510, 0.150, 0.150, 0.040, 0.004),
+      new TemplateField("dependantDob", "受养人出生日期", 5, 0.080, 0.210, 0.250, 0.040, 0.010),
+      new TemplateField("dependantNationality", "受养人国籍", 5, 0.380, 0.210, 0.250, 0.040, 0.010),
+      new TemplateField("dependantTravelDocumentNo", "受养人旅行证件号码", 5, 0.080, 0.330, 0.400, 0.040, 0.010),
+      new TemplateField("dependantSignature", "受养人/家长签名", 6, 0.490, 0.860, 0.380, 0.060, 0.012),
+      new TemplateField("dependantSignatureDate", "受养人声明日期", 6, 0.080, 0.860, 0.300, 0.060, 0.010)
   );
 
   private final Map<String, TemplateField> byKey = fields.stream()

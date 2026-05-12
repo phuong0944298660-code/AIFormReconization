@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+
+# Environment / Secrets
+.env
+.env.local
+.env.*
+
+# Documentation (keep CLAUDE.md out of images)
+CLAUDE.md
+*.md
+docs/
+
+# Logs
+*.log
+*.out
+*.err
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java
+backend/target/
+backend/*.log
+backend/*.out
+backend/*.cmd
+backend/test-*.pdf
+
+# Python
+rag-service/.venv/
+rag-service/.venv312/
+rag-service/__pycache__/
+rag-service/.pytest_cache/
+rag-service/*.log
+rag-service/*.cmd
+
+# Node.js
+frontend/node_modules/
+frontend/dist/
+frontend/.npm-cache/
+frontend/*.log
+frontend/*.cmd
+
+# Temporary files
+uploads/
+temp/
+tmp/
+*-review-response.json

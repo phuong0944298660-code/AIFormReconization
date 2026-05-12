@@ -8,14 +8,14 @@ spring:
       max-request-size: 30MB
 
 id995a:
-  template-path: ../official_templates/students/ID995A_来港就读申请表_申请人.pdf
-  rules-path: ../official_templates/students/ID995A_审核规则.html
+  template-path: ${TEMPLATE_PATH:../official_templates/students/ID995A_来港就读申请表_申请人.pdf}
+  rules-path: ${RULES_PATH:../official_templates/students/ID995A_审核规则.html}
 
 ocr:
   tesseract:
-    enabled: false
-    language: eng+chi_tra
-    data-path: ""
+    enabled: ${OCR_ENABLED:true}
+    language: ${OCR_LANGUAGE:eng+chi_sim+chi_tra}
+    data-path: ${TESSDATA_PREFIX:}
 
 llm:
   enabled: ${LLM_ENABLED:false}

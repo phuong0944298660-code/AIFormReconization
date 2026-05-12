@@ -11,6 +11,7 @@ import com.aiform.id995a.rules.RuleFinding;
 import com.aiform.id995a.rules.RuleReview;
 import com.aiform.id995a.template.Id995aTemplateRegistry;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -40,10 +41,17 @@ public class ReviewService {
 
   public ReviewResponse review(String filename, byte[] pdfBytes, Map<String, String> metadata) throws IOException {
     PdfAnalysis analysis = pdfSignalExtractor.analyze(pdfBytes);
+    Map<String, String> enrichedMetadata = new HashMap<>(metadata);
+    if (analysis.extractedApplicantAge() != null && !analysis.extractedApplicantAge().isBlank()) {
+      enrichedMetadata.put("applicantAge", analysis.extractedApplicantAge());
+    }
+    if (analysis.extractedSponsorType() != null && !analysis.extractedSponsorType().isBlank()) {
+      enrichedMetadata.put("sponsorType", analysis.extractedSponsorType());
+    }
     FormReviewInput input = new FormReviewInput(
-        metadata,
+        enrichedMetadata,
         analysis.fieldEvidence(),
-        AttachmentEvidence.fromMetadata(metadata)
+        AttachmentEvidence.fromMetadata(enrichedMetadata)
     );
     RuleReview review = ruleEngine.review(input);
     RetrievalResult retrievalResult = ragServiceClient.retrieve(buildRetrievalQuery(analysis, input, review));

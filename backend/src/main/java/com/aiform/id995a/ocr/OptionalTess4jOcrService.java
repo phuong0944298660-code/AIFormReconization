@@ -40,11 +40,10 @@ public class OptionalTess4jOcrService {
       }
 
       StringBuilder text = new StringBuilder();
-      int limit = Math.min(3, pages.size());
-      for (int index = 0; index < limit; index += 1) {
+      for (int index = 0; index < pages.size(); index += 1) {
         text.append(tesseract.doOCR(pages.get(index))).append('\n');
       }
-      messages.add("Tess4J/Tesseract OCR 已执行，语言：" + language);
+      messages.add("Tess4J/Tesseract OCR 已执行，语言：" + language + "，共识别 " + pages.size() + " 页");
       return new OcrResult(text.toString(), true, messages);
     } catch (Throwable throwable) {
       messages.add("Tess4J/Tesseract OCR 调用失败：" + throwable.getMessage());

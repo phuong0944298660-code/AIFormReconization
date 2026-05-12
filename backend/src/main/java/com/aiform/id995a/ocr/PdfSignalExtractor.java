@@ -11,11 +11,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.OptionalInt;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -49,7 +55,7 @@ public class PdfSignalExtractor {
     try (PDDocument document = Loader.loadPDF(pdfBytes)) {
       List<BufferedImage> renderedPages = renderPages(document, 80);
       List<BufferedImage> templatePages = loadTemplatePages(document.getNumberOfPages(), messages);
-      String pdfText = extractText(document, Math.min(5, document.getNumberOfPages()));
+      String pdfText = extractText(document, document.getNumberOfPages());
       String acroText = extractAcroText(document);
       OptionalTess4jOcrService.OcrResult ocrResult = ocrService.recognize(renderedPages);
       messages.addAll(ocrResult.messages());
@@ -77,21 +83,27 @@ public class PdfSignalExtractor {
           messages
       );
 
+      String combinedText = pdfText + "\n" + acroText + "\n" + ocrResult.text();
+      String extractedAge = extractApplicantAge(combinedText);
+      String extractedSponsorType = extractSponsorType(combinedText);
+
       return new PdfAnalysis(
           new FieldEvidence(Map.copyOf(present), Map.copyOf(confidence), trimPreview(pdfText + "\n" + ocrResult.text(), 5000)),
           List.copyOf(extractedFields),
           List.copyOf(pageSnapshots),
           snapshot,
-          status
+          status,
+          extractedAge,
+          extractedSponsorType
       );
     }
   }
 
   private List<BufferedImage> renderPages(PDDocument document, int dpi) throws IOException {
     PDFRenderer renderer = new PDFRenderer(document);
-    int limit = Math.min(5, document.getNumberOfPages());
+    int pageCount = document.getNumberOfPages();
     List<BufferedImage> pages = new ArrayList<>();
-    for (int index = 0; index < limit; index += 1) {
+    for (int index = 0; index < pageCount; index += 1) {
       pages.add(renderer.renderImageWithDPI(index, dpi, ImageType.RGB));
     }
     return pages;
@@ -104,7 +116,7 @@ public class PdfSignalExtractor {
     }
 
     try (PDDocument template = Loader.loadPDF(templatePath.toFile())) {
-      return renderPages(template, 80).subList(0, Math.min(Math.min(5, uploadedPageCount), template.getNumberOfPages()));
+      return renderPages(template, 80).subList(0, Math.min(uploadedPageCount, template.getNumberOfPages()));
     } catch (IOException exception) {
       messages.add("读取本地 ID995A 空白模板失败：" + exception.getMessage());
       return List.of();
@@ -224,6 +236,96 @@ public class PdfSignalExtractor {
       return normalized;
     }
     return normalized.substring(0, maxLength) + "...";
+  }
+
+  private static final Pattern DATE_PATTERN = Pattern.compile(
+      "\\b(\\d{1,2})[\\s/.\\-年](\\d{1,2})[\\s/.\\-月](\\d{4})\\b"
+      + "|\\b(\\d{4})[\\s/.\\-年](\\d{1,2})[\\s/.\\-月](\\d{1,2})\\b"
+  );
+
+  private String extractApplicantAge(String text) {
+    if (text == null || text.isBlank()) {
+      return "";
+    }
+    String[] keywords = {
+        "Date of Birth", "Date of birth", "DATE OF BIRTH",
+        "出生日期", "DOB", "Birth Date"
+    };
+    for (String keyword : keywords) {
+      int idx = text.indexOf(keyword);
+      if (idx < 0) {
+        continue;
+      }
+      String window = text.substring(idx, Math.min(text.length(), idx + 300));
+      OptionalInt age = tryParseAge(window);
+      if (age.isPresent()) {
+        return String.valueOf(age.getAsInt());
+      }
+    }
+    OptionalInt age = tryParseAge(text);
+    return age.isPresent() ? String.valueOf(age.getAsInt()) : "";
+  }
+
+  private OptionalInt tryParseAge(String text) {
+    Matcher matcher = DATE_PATTERN.matcher(text);
+    LocalDate today = LocalDate.now();
+    while (matcher.find()) {
+      try {
+        int year;
+        int month;
+        int day;
+        if (matcher.group(1) != null) {
+          day = Integer.parseInt(matcher.group(1));
+          month = Integer.parseInt(matcher.group(2));
+          year = Integer.parseInt(matcher.group(3));
+        } else {
+          year = Integer.parseInt(matcher.group(4));
+          month = Integer.parseInt(matcher.group(5));
+          day = Integer.parseInt(matcher.group(6));
+        }
+        if (year < 1900 || year > today.getYear()) {
+          continue;
+        }
+        if (month < 1 || month > 12) {
+          continue;
+        }
+        if (day < 1 || day > 31) {
+          continue;
+        }
+        LocalDate birth = LocalDate.of(year, month, day);
+        if (birth.isAfter(today)) {
+          continue;
+        }
+        int age = Period.between(birth, today).getYears();
+        if (age >= 0 && age <= 120) {
+          return OptionalInt.of(age);
+        }
+      } catch (Exception ignored) {
+        // skip and try next match
+      }
+    }
+    return OptionalInt.empty();
+  }
+
+  private String extractSponsorType(String text) {
+    if (text == null) {
+      return "";
+    }
+    String lower = text.toLowerCase(Locale.ROOT);
+    if (lower.contains("educational institution")
+        || lower.contains("school as sponsor")
+        || lower.contains("取录院校")
+        || lower.contains("院校保证")
+        || lower.contains("学校保证")) {
+      return "institution";
+    }
+    if (lower.contains("individual sponsor")
+        || lower.contains("personal sponsor")
+        || lower.contains("个人保证")
+        || lower.contains("亲友保证")) {
+      return "individual";
+    }
+    return "";
   }
 
   private record Signal(boolean present, double confidence) {}

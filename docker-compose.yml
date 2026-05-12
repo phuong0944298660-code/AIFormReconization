@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  rag-service:
+    build:
+      context: ./rag-service
+    container_name: id995a-rag
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./official_templates:/app/official_templates:ro
+    environment:
+      - EMBEDDING_ENABLED=false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8090/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: id995a-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./official_templates:/app/official_templates:ro
+    environment:
+      - OCR_ENABLED=true
+      - OCR_LANGUAGE=eng+chi_sim+chi_tra
+      - TESSDATA_PREFIX=/usr/share/tesseract-ocr/5/tessdata
+      - TEMPLATE_PATH=/app/official_templates/students/ID995A_来港就读申请表_申请人.pdf
+      - RULES_PATH=/app/official_templates/students/ID995A_审核规则.html
+      - RAG_ENABLED=true
+      - RAG_BASE_URL=http://rag-service:8090
+      - LLM_ENABLED=false
+    depends_on:
+      rag-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: id995a-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy

@@ -11,5 +11,7 @@ public record PdfAnalysis(
     List<ExtractedField> extractedFields,
     List<PageSnapshot> pageSnapshots,
     String snapshotDataUrl,
-    EngineStatus engineStatus
+    EngineStatus engineStatus,
+    String extractedApplicantAge,
+    String extractedSponsorType
 ) {}

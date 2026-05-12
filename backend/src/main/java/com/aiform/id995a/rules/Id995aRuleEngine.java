@@ -133,14 +133,24 @@ public class Id995aRuleEngine {
       }
     });
 
-    if (truthy(input.metadataValue("hasDependants")) && !attachments.dependantDocumentsComplete()) {
-      findings.add(blocking(
-          "DOC-008-DEPENDANTS",
-          "受养人资料或材料不完整",
-          "如有随行受养人，每名受养人须填妥 ID995A 乙部并提交照片、旅行证件副本和关系证明等材料。",
-          5,
-          "dependantPartB"
-      ));
+    if (truthy(input.metadataValue("hasDependants"))) {
+      require(findings, fields, "dependantName", "B1-001-DEPENDANT-NAME", "受养人姓名未填写", 5);
+      require(findings, fields, "dependantSex", "B1-001-DEPENDANT-SEX", "受养人性别未选择", 5);
+      require(findings, fields, "dependantDob", "B1-001-DEPENDANT-DOB", "受养人出生日期未填写", 5);
+      require(findings, fields, "dependantNationality", "B1-001-DEPENDANT-NATIONALITY", "受养人国籍未填写", 5);
+      require(findings, fields, "dependantTravelDocumentNo", "B1-002-DEPENDANT-TRAVEL-DOC", "受养人旅行证件号码未填写", 5);
+      require(findings, fields, "dependantSignature", "B5-001-DEPENDANT-SIGNATURE", "受养人/家长签名未签署", 6);
+      require(findings, fields, "dependantSignatureDate", "B5-001-DEPENDANT-SIGNATURE-DATE", "受养人声明日期未填写", 6);
+
+      if (!attachments.dependantDocumentsComplete()) {
+        findings.add(blocking(
+            "DOC-008-DEPENDANTS",
+            "受养人资料或材料不完整",
+            "如有随行受养人，每名受养人须填妥 ID995A 乙部并提交照片、旅行证件副本和关系证明等材料。",
+            5,
+            "dependantPartB"
+        ));
+      }
     }
 
     if (truthy(input.metadataValue("isMainlandChineseResident")) && !attachments.mainlandApplicationViaSchool()) {
