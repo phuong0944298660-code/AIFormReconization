@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>香港入境处 APPLIES-2（第二代申请及调查便利系统） AI（人工智能） 项目流程、技术选型与人天评估</title>
+  <style>
+    :root {
+      --ink: #15201f;
+      --muted: #53615f;
+      --line: #cfd8d5;
+      --paper: #f7f5ef;
+      --panel: #ffffff;
+      --deep: #1d4b45;
+      --teal: #0f766e;
+      --amber: #b56a19;
+      --red: #a33a2c;
+      --blue: #215d8d;
+      --green-soft: #e7f1ed;
+      --amber-soft: #f6ebdd;
+      --blue-soft: #e6eef6;
+      --red-soft: #f4e4e0;
+      --shadow: 0 12px 28px rgba(21, 32, 31, .08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(21,32,31,.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(21,32,31,.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      color: var(--ink);
+      font-family: Aptos, "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    a { color: var(--teal); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .page { max-width: 1420px; margin: 0 auto; padding: 32px 28px 72px; }
+
+    header {
+      border-top: 6px solid var(--deep);
+      border-bottom: 1px solid var(--line);
+      padding: 28px 0 26px;
+      display: grid;
+      grid-template-columns: 1.4fr .6fr;
+      gap: 28px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.18;
+      font-weight: 800;
+      max-width: 980px;
+    }
+
+    .sub {
+      margin: 14px 0 0;
+      color: var(--muted);
+      max-width: 920px;
+      font-size: 15px;
+    }
+
+    .stamp {
+      justify-self: end;
+      border: 2px solid var(--deep);
+      padding: 14px 16px;
+      min-width: 250px;
+      background: rgba(255,255,255,.55);
+      box-shadow: var(--shadow);
+    }
+
+    .stamp strong { display: block; font-size: 24px; color: var(--deep); }
+    .stamp span { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    section { margin-top: 34px; }
+    h2 {
+      font-size: 22px;
+      margin: 0 0 14px;
+      padding-left: 12px;
+      border-left: 5px solid var(--deep);
+      line-height: 1.25;
+    }
+
+    h3 { font-size: 17px; margin: 22px 0 10px; color: var(--deep); }
+    .note { color: var(--muted); font-size: 14px; margin: 8px 0 14px; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .kpi {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 15px 16px;
+      box-shadow: var(--shadow);
+      min-height: 108px;
+    }
+    .kpi .label { color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 700; }
+    .kpi .value { display: block; font-size: 25px; font-weight: 800; margin-top: 8px; color: var(--deep); }
+    .kpi p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+
+    .band {
+      background: rgba(255,255,255,.72);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 10px 11px;
+      vertical-align: top;
+      font-size: 13px;
+    }
+    th {
+      background: #e8eee9;
+      color: #173b36;
+      font-weight: 800;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    td:last-child, th:last-child { border-right: 0; }
+    tr:last-child td { border-bottom: 0; }
+    .tight td, .tight th { padding: 8px 9px; }
+    .num { text-align: right; font-weight: 800; color: var(--deep); white-space: nowrap; }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--deep);
+      background: var(--green-soft);
+      margin: 0 4px 4px 0;
+      white-space: nowrap;
+    }
+    .tag.warn { color: var(--amber); background: var(--amber-soft); }
+    .tag.risk { color: var(--red); background: var(--red-soft); }
+    .tag.info { color: var(--blue); background: var(--blue-soft); }
+
+    .file-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .file-list li { margin: 0 0 6px; }
+    .format {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .scenario {
+      border-left: 3px solid var(--teal);
+      padding: 6px 0 6px 10px;
+      margin: 0 0 8px;
+      background: rgba(231,241,237,.45);
+    }
+    .scenario:last-child { margin-bottom: 0; }
+    .scenario b { color: var(--deep); }
+    .scenario .line {
+      display: block;
+      margin-top: 3px;
+    }
+    .choice {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      margin-right: 5px;
+      color: #173b36;
+      background: var(--green-soft);
+      border: 1px solid rgba(29,75,69,.18);
+    }
+    .choice.alt { color: var(--blue); background: var(--blue-soft); }
+    .choice.opt { color: var(--amber); background: var(--amber-soft); }
+    .choice.fallback { color: var(--red); background: var(--red-soft); }
+    .label-work {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .label-work li { margin-bottom: 6px; }
+    .md-plan {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
+      min-width: 150px;
+    }
+    .md-plan span {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px dotted rgba(83,97,95,.45);
+      padding-bottom: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .md-plan strong {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--deep);
+      font-size: 14px;
+      padding-top: 2px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .step {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--teal);
+      border-radius: 6px;
+      padding: 12px;
+      min-height: 112px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .step b { display: block; font-size: 14px; margin-bottom: 8px; }
+    .step span { color: var(--muted); font-size: 12px; }
+    .step:after {
+      content: "→";
+      position: absolute;
+      right: -11px;
+      top: 40%;
+      color: var(--amber);
+      font-weight: 800;
+    }
+    .step:nth-child(6):after, .step:last-child:after { content: ""; }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .phase {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .phase .week { color: var(--amber); font-weight: 800; font-size: 13px; }
+    .phase b { display: block; margin: 5px 0 8px; }
+    .phase p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .source-list {
+      columns: 2;
+      column-gap: 32px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+    }
+    .source-list li { break-inside: avoid; margin-bottom: 8px; }
+
+    @media (max-width: 1100px) {
+      header, .two-col { grid-template-columns: 1fr; }
+      .stamp { justify-self: stretch; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .flow { grid-template-columns: repeat(3, 1fr); }
+      .timeline { grid-template-columns: 1fr; }
+      .source-list { columns: 1; }
+    }
+    @media print {
+      body { background: white; }
+      .page { max-width: none; padding: 18px; }
+      .kpi, table, .phase, .step, .stamp, .source-list { box-shadow: none; }
+      th { position: static; }
+      a { color: var(--ink); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>香港入境处 APPLIES-2（第二代申请及调查便利系统） AI（人工智能）项目流程、技术选型与人天评估</h1>
+        <p class="sub">版本：v11。面向商务评估与技术拆解。客户主体按香港入境事务处（ImmD，香港入境事务处）处理；询价材料中的 CMHK（香港移动）只作为材料来源背景，不作为客户主体。本版在端到端产品流程中新增“阶段归类”列，对标需求文档三大业务节点：文件分类、数据处理和校验、部门审批与归档。</p>
+      </div>
+      <div class="stamp">
+        <strong>550 人天</strong>
+        <span>3 个月试点建议工作量</span>
+        <span>平均 9-10 人并行推进</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>一页结论</h2>
+      <div class="kpi-grid">
+        <div class="kpi"><span class="label">工期判断</span><span class="value">可做 MVP（最小可行试点版本）</span><p>不建议承诺全类别生产级覆盖。</p></div>
+        <div class="kpi"><span class="label">核心范围</span><span class="value">UC1-UC4（用例1至用例4）</span><p>分类、核验、Minutes（审批纪要）/邮件初稿草拟、受理部门同步。</p></div>
+        <div class="kpi"><span class="label">部署前提</span><span class="value">On-Prem（本地私有化部署）</span><p>RESTRICTED（政府受限保密级别）网络内私有化部署。</p></div>
+        <div class="kpi"><span class="label">技术优先级</span><span class="value">开源优先</span><p>MIT（开源许可证）/ Apache（开源许可证）/ BSD（开源许可证）/ MPL（开源许可证）优先。</p></div>
+        <div class="kpi"><span class="label">最大风险</span><span class="value">样本与规则</span><p>真实样本、业务规则确认决定准确率。</p></div>
+      </div>
+    </section>
+
+
+    <section>
+      <h2>RFI（询价文件）既有系统与集成边界</h2>
+      <p class="note">本节来自 CMHK_RFI_Spec_Extract_SW_Partner.docx（软件伙伴 RFI 摘录）。技术方案按 ImmD（香港入境事务处）既有系统接入，不假设 AI（人工智能）平台可直接读取内部系统数据库。</p>
+      <table class="tight">
+        <thead><tr><th>RFI 约束</th><th>对产品流程的影响</th><th>对技术选型的影响</th></tr></thead>
+        <tbody>
+          <tr><td>APPLIES-2（第二代申请及调查便利系统）和其他 ImmD 内部系统主动向 Interface Server（接口服务器）发起 service request（服务请求）。</td><td>案件接入节点必须以“被动接收请求、返回结果”为主，不设计直接查库。</td><td>主选 FastAPI（后端接口框架）建设 Interface Server；所有结果通过 API（应用程序接口）/SFTP（安全文件传输协议）/Message Queue（消息队列）回传。</td></tr>
+          <tr><td>Other ImmD Systems（其他入境处系统）数据在结果生成后或 ImmD 同意时间点须拆解清除。</td><td>流程必须有“结果回传、临时数据清除、审计留痕”节点。</td><td>PostgreSQL（开源关系型数据库）只保存任务状态、规则版本、反馈标注和审计摘要；原始附件默认由既有系统保管，AI 平台只保留处理期临时副本。</td></tr>
+          <tr><td>须兼容 ImmD 既有中央软件和 ITAI/Xinchuang（信息技术应用创新/信创）产品。</td><td>不重复建设客户已有安全、日志、监控平台。</td><td>杀毒对接 Trellix ePolicy Orchestrator（安全管理平台）+ Trellix Endpoint Security（终端安全软件）；日志对接 Rizhiyi（日誌易/SIEM 安全日志平台）；监控告警对接 IBM Netcool（网络与事件监控平台）。</td></tr>
+          <tr><td>支持 Docker container（Docker 容器）部署、OpenAI-compatible API（兼容 OpenAI 人工智能接口格式）、streaming/non-streaming output（流式/非流式输出）。</td><td>模型服务必须以标准接口交付，便于 APPLIES-2（第二代申请及调查便利系统）或 Interface Server（接口服务器）调用。</td><td>主选 vLLM（大模型高性能推理框架）承载 Qwen3.6-35B-A3B（通义千问3.6开源大语言模型），统一提供 OpenAI-compatible API（兼容 OpenAI 人工智能接口格式）；如客户 GPU（图形处理器）显存不足，按节点计入模型压缩/量化。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>联网确认后的开源主选口径</h2>
+      <p class="note">确认日期：2026-05-11。以下只保留同场景一个主选；如同一框架内部包含多个组件，按“同一框架组合”处理，不再列多套备选。</p>
+      <table class="tight">
+        <thead><tr><th>能力域</th><th>v8 主选</th><th>联网确认依据</th><th>对本项目的影响</th></tr></thead>
+        <tbody>
+          <tr><td>大模型推理与草拟</td><td>Qwen3.6-35B-A3B（通义千问3.6开源大语言模型） + vLLM（大模型高性能推理框架）</td><td>官方 Qwen3.6（通义千问3.6）仓库显示 Qwen3.6（通义千问3.6）是比 Qwen3.5（通义千问3.5）更新的一代，并提供 vLLM（大模型高性能推理框架）部署说明。</td><td>将旧视觉语言模型口径升级为 Qwen3.6（通义千问3.6）；Minutes（审批纪要）、邮件初稿、规则解释和跨文件核验统一复用同一个 Qwen3.6（通义千问3.6）模型。</td></tr>
+          <tr><td>OCR（文字识别）与文档解析</td><td>PaddleOCR 3.x（飞桨开源文档智能框架）+ PaddleOCR-VL-1.5（文档解析视觉语言模型）</td><td>PaddleOCR（飞桨文字识别框架）官方仓库在 2026 年更新 PaddleOCR-VL-1.5（文档解析视觉语言模型），并持续维护 PP-OCRv5（文字识别模型）和 PP-StructureV3（版面结构化工具）。</td><td>OCR（文字识别）、版面、表格、印章/图片页预处理优先走同一 PaddleOCR（飞桨文字识别框架）体系，减少多框架集成成本。</td></tr>
+          <tr><td>政策检索与向量召回</td><td>Qwen3-Embedding-8B（通义千问向量模型）+ Qwen3-Reranker-8B（通义千问重排序模型）+ OpenSearch（全文/向量检索引擎）</td><td>Qwen3-Embedding（通义千问向量模型）官方仓库和模型卡显示其覆盖多语言、长文本、代码检索和重排序任务；OpenSearch（全文/向量检索引擎）官方文档支持向量 k-NN（近邻搜索）。</td><td>替换旧 bge-m3（多语言向量模型）口径，政策条款、材料说明、审核规则和证据引用统一用 Qwen3（通义千问3）检索模型。</td></tr>
+          <tr><td>模型压缩/量化</td><td>vLLM（大模型高性能推理框架）量化能力 + LLM Compressor（大模型压缩工具）</td><td>vLLM（大模型高性能推理框架）官方文档列出 AWQ（激活感知权重量化）、GPTQ（生成式预训练量化）、FP8（8位浮点）等量化部署能力；LLM Compressor（大模型压缩工具）官方文档支持为 vLLM（大模型高性能推理框架）生成量化模型。</td><td>不改变主模型选型，只在客户本地 GPU（图形处理器）资源不足时，把压缩、压测、准确率回归和上线参数固化计入工作量。</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>先梳理：哪些人提交哪些文件，审批看什么</h2>
+      <p class="note">文件识别节点不能只按“PDF（便携式文档格式）/OCR（文字识别）”建模，应先按申请人群、材料桶、审批规则建成可配置规则库。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>人群 / 申请类别</th>
+            <th>提交主体</th>
+            <th>主要文件与常见电子格式</th>
+            <th>审批/核验规则</th>
+            <th>AI（人工智能）处理重点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>就业/专业人士与雇主</b><br>GEP（一般就业政策） / ASMTP（输入内地人才计划） / IANG（非本地毕业生留港/回港就业安排） / TTPS（高端人才通行证计划）</td>
+            <td>申请人、雇主、随行受养人</td>
+            <td>
+              <ul class="file-list">
+                <li>旅行证件、HKID（香港身份证）<span class="format">常见格式：JPG/PNG 手机拍照，扫描型 PDF（便携式文档格式），少量 TIFF（扫描图像格式）。</span></li>
+                <li>学历/工作经历、聘用合约、公司背景<span class="format">常见格式：原生 PDF、扫描型 PDF、DOCX（Word 文档格式），少量 JPG/PNG。</span></li>
+                <li>商业登记、公司财务、商业计划<span class="format">常见格式：原生 PDF、扫描型 PDF、XLSX（Excel 表格）/CSV（表格数据文件），DOCX。</span></li>
+                <li>TTPS（高端人才通行证计划）收入/学历/经验、随行关系证明<span class="format">常见格式：原生 PDF、扫描型 PDF、JPG/PNG，官方证明多为 PDF。</span></li>
+              </ul>
+            </td>
+            <td>无安全/严重犯罪记录；具备教育或专业能力；真实职位空缺；职位与资历相关且不易由本地劳动力承担；薪酬符合市场水平；ImmD（香港入境事务处）保留酌情权。</td>
+            <td>申请人与雇主材料拆分；职位、薪酬、雇佣期、学历和公司财务字段抽取；跨文件一致性。</td>
+          </tr>
+          <tr>
+            <td><b>学生与本地保证人</b></td>
+            <td>学生、学校或个人保证人、随行受养人</td>
+            <td>
+              <ul class="file-list">
+                <li>ID 995A（来港就读申请人表格编号）、ID 995B（来港就读保证人表格编号）<span class="format">常见格式：原生 PDF 表格、扫描型 PDF，纸质拍照时为 JPG/PNG。</span></li>
+                <li>录取信、课程/学校证明<span class="format">常见格式：原生 PDF、扫描型 PDF、DOCX，邮件导出 PDF。</span></li>
+                <li>旅行证件、近照、HKID（香港身份证）、地区性证件<span class="format">常见格式：JPG/PNG、扫描型 PDF，证件照通常为 JPG/PNG。</span></li>
+                <li>未成年人监护同意、住宿、财务支持<span class="format">常见格式：扫描型 PDF、JPG/PNG，银行/工资/税务资料也可能是原生 PDF 或 XLSX。</span></li>
+              </ul>
+            </td>
+            <td>须被合资格学校/课程取录；可负担学费、生活和住宿；保证人年满 18 且为真实香港居民；学生通常不得就业或经营业务，特定实习例外。</td>
+            <td>录取信与课程识别；未成年人监护、住宿、财务证明完整性；学校/课程/身份字段核验。</td>
+          </tr>
+          <tr>
+            <td><b>受养人</b></td>
+            <td>受养人、保证人</td>
+            <td>
+              <ul class="file-list">
+                <li>近照、旅行证件、申请人/保证人 HKID（香港身份证）<span class="format">常见格式：JPG/PNG、扫描型 PDF。</span></li>
+                <li>关系证明：结婚证、出生证、家庭照片/信件、户口材料<span class="format">常见格式：扫描型 PDF、JPG/PNG；照片类多为 JPG/PNG；信件可为 PDF/DOCX。</span></li>
+                <li>保证人财务证明、住宿证明<span class="format">常见格式：原生 PDF、扫描型 PDF、JPG/PNG；租约可能为 PDF/DOCX。</span></li>
+              </ul>
+            </td>
+            <td>真实关系、无不良记录、保证人能提供高于基本生活水平的支持与合适住宿；不同保证人身份决定可带受养范围。</td>
+            <td>结婚/出生/家庭证明归类；关系链字段抽取；保证人财务与住宿证明匹配。</td>
+          </tr>
+          <tr>
+            <td><b>外籍家庭佣工与雇主</b></td>
+            <td>Helper（外籍家庭佣工）、雇主</td>
+            <td>
+              <ul class="file-list">
+                <li>ID 988A（外籍家庭佣工签证/延期申请表）、ID 988B（聘用外籍家庭佣工申请表）、ID 407（外籍家庭佣工标准雇佣合约）<span class="format">常见格式：原生 PDF 表格、扫描型 PDF，纸质拍照时为 JPG/PNG。</span></li>
+                <li>Helper（外籍家庭佣工）旅行证件、雇主 HKID（香港身份证）/旅行证件<span class="format">常见格式：JPG/PNG、扫描型 PDF。</span></li>
+                <li>雇主财务与住址证明、release letter（现雇主释放信/解约证明）<span class="format">常见格式：原生 PDF、扫描型 PDF、JPG/PNG、DOCX；银行/工资资料可能为 XLSX。</span></li>
+              </ul>
+            </td>
+            <td>雇主一般月入不低于 HK$15,000（港币一万五千元）或有可比资产；必须使用标准合约；Helper（外籍家庭佣工）只能从事指定雇主家务并同住，不得另行就业；材料不全会退回。</td>
+            <td>ID 407（外籍家庭佣工标准雇佣合约）合约字段抽取；工资、地址、合同期、签名一致性；财务门槛核验。</td>
+          </tr>
+          <tr>
+            <td><b>新资本投资入境计划</b></td>
+            <td>投资申请人、随行受养人</td>
+            <td>
+              <ul class="file-list">
+                <li>旅行证件、HKID（香港身份证）/澳门/台湾/海外永居证明<span class="format">常见格式：JPG/PNG、扫描型 PDF，官方证明多为 PDF。</span></li>
+                <li>InvestHK（香港投资推广署）净资产证明、投资要求证明<span class="format">常见格式：原生 PDF、扫描型 PDF；资产明细可能附 XLSX/CSV。</span></li>
+                <li>无犯罪记录证明、受养人关系证明<span class="format">常见格式：扫描型 PDF、JPG/PNG、官方 PDF；非中英文材料可能另附翻译 PDF/DOCX。</span></li>
+              </ul>
+            </td>
+            <td>年满 18；满足 HK$30,000,000（港币三千万元）净资产和不少于 HK$30,000,000（港币三千万元）合资格投资；InvestHK（香港投资推广署）先验证，再由 ImmD（香港入境事务处）审批；须无不良入境/安全记录。</td>
+            <td>证明真伪/有效期、金额币种、无犯罪记录、受养人关系与申请表交叉核验。</td>
+          </tr>
+          <tr>
+            <td><b>优秀人才/高才/自雇型人才</b></td>
+            <td>申请人、随行受养人</td>
+            <td>
+              <ul class="file-list">
+                <li>旅行证件<span class="format">常见格式：JPG/PNG、扫描型 PDF。</span></li>
+                <li>学历、专业资格、工作履历、成就证明<span class="format">常见格式：原生 PDF、扫描型 PDF、DOCX，证书拍照为 JPG/PNG。</span></li>
+                <li>收入/税务证明、创业/就业材料、关系证明<span class="format">常见格式：原生 PDF、扫描型 PDF、JPG/PNG；财务报表可能为 XLSX/CSV。</span></li>
+              </ul>
+            </td>
+            <td>QMAS（优秀人才入境计划）要求 18 岁以上、能自给自足、无刑事或不良入境记录、良好教育/专业/技术能力，并按计分或成就机制筛选；TTPS（高端人才通行证计划）按高收入或合资格大学学历/经验分类。</td>
+            <td>履历事实抽取；学历/收入/成就材料归类；计分/门槛规则引擎。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <section>
+      <h2>受理部门路由与结果同步</h2>
+      <p class="note">补充关键口径：AI（人工智能）不应只输出“材料分类/核验结论”，还要根据申请类别、材料类型、规则命中和 APPLIES-2（第二代申请及调查便利系统）路由元数据，匹配对应受理部门/业务队列。审核结果、Minutes（审批纪要）草稿、邮件初稿和补件建议都要同步给该部门。具体部门名称、邮箱组和队列编号应由 ImmD（香港入境事务处）在规则库里配置，不在代码中硬编码。</p>
+      <table class="tight">
+        <thead><tr><th>路由依据</th><th>对应受理/同步对象</th><th>同步内容</th><th>业务规则</th><th>技术实现</th></tr></thead>
+        <tbody>
+          <tr><td>就业/专业人士、雇主材料、GEP（一般就业政策）/ASMTP（输入内地人才计划）/IANG（非本地毕业生留港/回港就业安排）/TTPS（高端人才通行证计划）规则命中。</td><td>就业/专业人士入境申请受理队列、雇主资料复核队列。</td><td>材料分类结果、雇佣/薪酬/学历字段、风险提示、邮件初稿、Officer（审批人员）审核意见。</td><td>以申请类别优先；如材料命中雇主资质、职位真实性、薪酬门槛等规则，同步到雇主资料复核队列。</td><td>PostgreSQL（开源关系型数据库）保存“申请类别 + 材料桶 + 规则命中 -> 受理部门/队列/邮箱组”映射；FastAPI（后端接口框架）回写同步状态。</td></tr>
+          <tr><td>学生申请、ID 995A/ID 995B（来港就读表格编号）、录取信、学校/课程规则命中。</td><td>学生签证/来港就读受理队列、学校/保证人资料复核队列。</td><td>录取/课程字段、保证人资料、缺件清单、补件邮件初稿、人工审核状态。</td><td>未成年人监护、住宿、财务支持等规则命中时，同步给对应复核角色。</td><td>LangGraph（工作流编排框架）根据规则库生成部门路由任务；RabbitMQ（消息队列）异步推送。</td></tr>
+          <tr><td>受养人申请、关系证明、保证人财务/住宿规则命中。</td><td>受养人申请受理队列、关系证明复核队列。</td><td>关系链字段、保证人身份/财务/住宿核验结果、补件建议邮件初稿。</td><td>关系证明缺失、关系链冲突或保证人资格不足时，必须同步到人工复核队列。</td><td>OpenSearch（全文/向量检索引擎）保留证据引用；APPLIES-2（第二代申请及调查便利系统）只接收结构化结果和证据链接。</td></tr>
+          <tr><td>外籍家庭佣工、ID 988A/ID 988B/ID 407（外籍家庭佣工表格/合约编号）、工资/住址/合约规则命中。</td><td>外籍家庭佣工受理队列、雇主财务与住址复核队列。</td><td>合同期、工资、住址、签名/印章疑点、雇主门槛核验、邮件初稿。</td><td>工资门槛、标准合约、同住要求、不得另行就业等规则命中后同步。</td><td>规则引擎先判断确定性条件，Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）只生成说明文字和邮件草稿。</td></tr>
+          <tr><td>新资本投资入境计划、InvestHK（香港投资推广署）验证结果、资产/投资金额规则命中。</td><td>新资本投资入境计划受理队列；如涉及前置验证，需标记 InvestHK 相关状态。</td><td>净资产/投资金额核验、无犯罪记录、关系证明、待同步部门状态、邮件初稿。</td><td>InvestHK 前置验证状态应作为路由条件，不由 AI 自行假设。</td><td>部门路由表增加“外部机构状态字段”；审核结果回传时带上状态码和证据引用。</td></tr>
+          <tr><td>优秀人才/高才/自雇型人才、计分/学历/收入/成就材料规则命中。</td><td>人才入境计划受理队列、计分/成就材料复核队列。</td><td>计分项、学历/收入/成就证据、风险提示、邮件初稿和审核结论。</td><td>计分不足、成就证明不足、收入证明冲突时同步给对应复核队列。</td><td>同一套规则库和 LangGraph（工作流编排框架）流程复用，不新增独立路由引擎。</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>端到端产品流程（阶段归类 / 输入 / 动作 / 目的 / 输出）</h2>
+      <p class="note">流程按 RFI（询价文件）要求设计为“ImmD 内部系统主动请求 Interface Server（接口服务器）”。本表对标需求文档的三大业务节点：1-4 属于“申请材料接入与文件分类”，5-7 属于“数据抽取、处理与规则核验”，8-11 属于“审批协同、结果同步与归档优化”。</p>
+      <table class="tight">
+        <thead><tr><th>阶段归类</th><th>节点</th><th>输入内容</th><th>处理动作</th><th>目的 / 为什么做</th><th>输出内容</th><th>输出落点</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4"><b>一、申请材料接入与文件分类</b><br><span class="format">对标需求节点：自动文件分类。覆盖规则基线、案件接入、杀毒准入、文件检查清洗和材料归类。</span></td><td>1. 政策、材料与受理部门规则基线</td><td>ImmD 政策条款、申请类别、材料清单、受理部门/队列/邮箱组映射、RFI/RFQ（询价/报价文件）要求、样本文档。</td><td>把申请人群、材料桶、字段、审批规则、例外条件和受理部门路由做成版本化规则。</td><td>统一后续分类、核验、部门同步和邮件草拟的业务口径，避免不同节点各自理解规则。</td><td>规则库 v1、材料字典、字段字典、部门路由表、审批规则 JSON（结构化数据格式）/YAML（规则配置文件格式）、评测样本清单。</td><td>PostgreSQL（开源关系型数据库）+ OpenSearch（全文/向量检索引擎）。</td></tr>
+          <tr><td>2. 案件接入</td><td>APPLIES-2 发起的 service request（服务请求）、case application data（案件申请数据）、附件包、申请类别、案件编号、routing metadata（路由元数据）、回传地址。</td><td>校验请求、登记任务、生成文件清单、分配 job id（任务编号）、读取初始部门/队列提示、进入异步队列。</td><td>让 APPLIES-2 和 AI（人工智能）平台解耦，保证高峰案件可以排队处理、可追踪、可重试。</td><td>接收回执、任务编号、文件 manifest（清单）、初始受理部门候选、异常码、待处理消息。</td><td>Interface Server（接口服务器）、RabbitMQ（消息队列）、PostgreSQL。</td></tr>
+          <tr><td>3. 杀毒与安全隔离</td><td>APPLIES-2（第二代申请及调查便利系统）传入的原始附件包、文件 hash（哈希值/指纹）、案件编号、来源系统信息。</td><td>调用 Trellix（既有安全软件）进行杀毒扫描、恶意文件拦截、隔离、扫描记录留痕；只输出安全状态，不做文档内容理解。</td><td>先完成安全准入，避免高风险文件进入解析链路；同时满足 RFI（询价文件）对既有安全软件和审计留痕的要求。</td><td>安全扫描结果、隔离文件清单、可进入后续处理的文件清单、扫描日志、异常状态码。</td><td>Trellix（既有安全软件）扫描记录、PostgreSQL（开源关系型数据库）任务状态、Rizhiyi（日誌易）审计日志。</td></tr>
+          <tr><td>4. 文件检查、清洗与材料分类</td><td>杀毒通过的 PDF（便携式文档格式）、JPG/PNG/TIFF（图片格式）、DOCX/XLSX（Office 办公文档）、文件元数据、申请类别、材料规则库。</td><td>检查文件是否损坏、加密、重复、缺页、低清晰度或方向异常；做去重、格式归一、Office（办公文档）转换、页面渲染、轻量 OCR（文字识别）/标题识别/表格编号识别；判断是什么材料并归入材料桶。</td><td>在进入深度字段抽取前，先判断文件能不能处理、需要怎样处理、属于哪类申请材料；给后续 KIE（关键信息抽取）选择正确字段模板。</td><td>清洗后的文件包、页级图片、文件质量报告、材料类别、缺件/错件/重复清单、低置信度复核队列、初步受理部门候选。</td><td>Canonical JSON（统一结构化数据格式）、OpenSearch（全文/向量检索引擎）索引、APPLIES-2 回传数据、人工复核队列。</td></tr>
+          <tr><td rowspan="3"><b>二、数据抽取、处理与规则核验</b><br><span class="format">对标需求节点：智能数据核验。覆盖 KIE（关键信息抽取）、专项识别、跨文件一致性和政策检索。</span></td><td>5. KIE（关键信息抽取）</td><td>已分类材料、清洗后的页面图片、原生 PDF（便携式文档格式）文本层、表格页、申请表字段模板。</td><td>按材料类别做深度 OCR（文字识别）/版面解析/字段抽取，抽取姓名、证件号、雇主、薪酬、学校、课程、金额、日期、关系、地址等字段。</td><td>把审批真正要看的事实抽出来，作为规则核验、跨文件比对、审批纪要和邮件初稿的变量。</td><td>Canonical JSON（统一结构化数据格式）字段值、表格 JSON（结构化数据格式）、证据坐标、置信度、字段缺失/冲突提示。</td><td>规则核验节点、Minutes（审批纪要）/邮件草稿生成节点、APPLIES-2 结果接口。</td></tr>
+          <tr><td>6. 专项识别与确定性校验</td><td>护照/HKID（香港身份证）、照片、签名/印章页、二维码/条码、财务表格。</td><td>MRZ（护照机读区，护照个人资料页底部两行由大写字母、数字和 &lt; 组成的编码区）解析、HKID（香港身份证）校验位、二维码识别、照片合规、章签定位、金额合计。</td><td>对证件、二维码、金额、照片、章签等高风险点做确定性或专项检查，降低大模型误判风险；MRZ（护照机读区）可用软件 OCR（文字识别）+ ICAO 9303（国际机读旅行证件标准）规则校验，不等同于采购护照机读机器。</td><td>证件校验结果、照片/章签疑点、二维码解析值、金额核对结果。</td><td>跨文件核验节点、Officer（审批人员）复核任务、对应受理部门。</td></tr>
+          <tr><td>7. 跨文件核验、政策检索与部门确认</td><td>Canonical JSON（统一结构化数据格式）、专项校验结果、政策规则库、材料原文索引、部门路由表。</td><td>核对字段一致性，检索对应政策条款，按规则命中确认受理部门/队列/邮箱组。</td><td>把单份材料的识别结果提升为案件级判断，形成可解释证据链，并确认应同步的受理部门。</td><td>一致性核验结果、风险标记、政策引用、证据链、受理部门确认结果、需人工裁决项。</td><td>审批纪要/邮件草拟节点、APPLIES-2 结果接口、对应受理部门。</td></tr>
+          <tr><td rowspan="4"><b>三、审批协同、结果同步与归档优化</b><br><span class="format">对标需求节点：智能审批纪要与结果回传。覆盖纪要/邮件草拟、Officer（审批人员）与受理部门审阅、回传归档、监控评测。</span></td><td>8. Minutes（审批纪要）/邮件初稿草拟</td><td>分类结果、字段抽取结果、核验结论、政策引用、证据链、受理部门、DOCX（Word 文档）模板、邮件模板。</td><td>按部门模板生成 Minutes（审批纪要）草稿、补件/追问邮件初稿、内部同步说明，只引用已核验证据。</td><td>把核验结论转成可审阅、可修改、可同步的业务文本，减少审批人员和受理部门重复撰写。</td><td>Minutes（审批纪要）草稿、邮件初稿、证据引用清单、低置信度段落、待受理部门确认项。</td><td>APPLIES-2（第二代申请及调查便利系统）/Officer（审批人员）审阅界面、受理部门邮箱组/业务队列、结果回传接口。</td></tr>
+          <tr><td>9. Officer（审批人员）与受理部门审阅反馈</td><td>AI（人工智能）结果、原文高亮、Minutes（审批纪要）草稿、邮件初稿、异常/缺件/冲突清单、部门路由结果。</td><td>审批人员和对应受理部门采纳、修改、驳回、补充原因；系统把人工修正沉淀为反馈数据。</td><td>让最终判断由人确认，形成责任闭环；同时把修改记录变成后续规则、提示词和模型优化数据。</td><td>最终确认结果、邮件草稿状态、人工修正字段、错误类型、可用于调优的标注样本。</td><td>APPLIES-2（第二代申请及调查便利系统）工作流、受理部门同步接口、Label Studio（标注平台）、PostgreSQL（开源关系型数据库）反馈库。</td></tr>
+          <tr><td>10. 结果回传、部门同步、归档与清除</td><td>最终确认数据、报告、图片、Minutes（审批纪要）草稿/定稿、邮件草稿/发送状态、处理日志。</td><td>打包结果，按接口契约回传；向对应受理部门同步审核结果和邮件初稿状态；按 RFI（询价文件）要求清除临时数据。</td><td>把 AI 处理结果回到 ImmD 既有工作流，保证业务可继续办理，同时满足数据保留、审计和清除要求。</td><td>API（应用程序接口）/SFTP（安全文件传输协议）/MQ（消息队列）回传包、部门同步状态、邮件草稿状态、审计编号、临时数据清除记录。</td><td>ImmD 既有系统、受理部门业务队列、Rizhiyi（日誌易）审计日志。</td></tr>
+          <tr><td>11. 监控、评测与持续优化</td><td>运行日志、接口耗时、失败请求、人工反馈、部门驳回原因、低置信度样本、错例、量化模型性能指标。</td><td>监控告警、准确率回归、部门路由准确率评估、规则/提示词优化、必要时轻量微调；量化模型要单独跟踪延迟、吞吐和准确率变化。</td><td>持续证明系统稳定性和准确率，发现部门路由、字段识别、邮件草稿和模型压缩后的质量问题并闭环改进。</td><td>监控指标、告警事件、评测报告、规则版本、部门路由准确率、提示词版本、模型版本、量化版本。</td><td>Rizhiyi（日誌易）、IBM Netcool（既有监控）、MLflow（模型实验管理工具）。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>节点人天与技术选型</h2>
+      <p class="note">本版按“工程团队统一主栈”收敛，并按职责重新拆分节点：第 3 节只做杀毒与安全隔离，第 4 节负责损坏检查、清洗、轻量内容识别和材料分类，第 5 节负责 KIE（关键信息抽取）深度字段抽取。总人天保持 550，其中模型压缩/量化 30 人天。</p>
+      <table class="tight">
+        <thead><tr><th>节点</th><th>输入 / 输出摘要</th><th>统一主选技术</th><th>机器预标注 / 人工标注与审核纠正工作</th><th>人天拆分（含模型压缩/量化）</th></tr></thead>
+        <tbody>
+          <tr><td>1. 政策、材料与受理部门规则库</td><td><b>输入：</b>政策条款、申请类别、材料清单、字段定义、受理部门/队列/邮箱组映射。<br><b>输出：</b>规则库、材料字典、字段字典、部门路由表、评测样本清单。</td><td><div class="scenario"><b>主选：</b>PostgreSQL（开源关系型数据库）+ JSON Schema（结构化数据校验规则）+ YAML（规则配置文件格式）+ OpenSearch（全文/向量检索引擎）。<span class="line">在原规则库上新增“申请类别 + 材料桶 + 规则命中 -> 受理部门/队列/邮箱组”映射；部门名称、邮箱组、队列编号全部配置化。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>脚本初步抽取政策标题、表格字段、材料名称，并按申请类别给出部门候选。</li><li><b>人工标注/审核纠正：</b>业务专家确认受理部门、队列、邮箱组、抄送范围、例外规则和生效日期。</li><li><b>优化：</b>根据错例修正规则版本、路由条件和检索关键词。</li><li><b>模型压缩/量化：</b>本节点不直接部署大模型，按 0 人天计。</li></ul></td><td><div class="md-plan"><span>开发 <b>10</b></span><span>部署 <b>4</b></span><span>标注+纠正 <b>12</b></span><span>规则/提示词/模型优化 <b>4</b></span><span>模型压缩/量化 <b>0</b></span><strong>总计 <b>30</b></strong></div></td></tr>
+          <tr><td>2. 案件接入与 Interface Server（接口服务器）</td><td><b>输入：</b>APPLIES-2 service request（服务请求）、附件包、案件元数据、routing metadata（路由元数据）。<br><b>输出：</b>接收回执、任务编号、文件清单、初始受理部门候选、队列消息。</td><td><div class="scenario"><b>主选：</b>FastAPI（后端接口框架）+ Pydantic（数据校验框架）+ RabbitMQ（消息队列）+ Docker（容器化部署工具）。<span class="line">FastAPI（后端接口框架）统一承接 API（应用程序接口）、反馈接口和部门同步接口；RabbitMQ（消息队列）负责异步推送受理部门同步任务。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>自动校验案件包字段、文件清单、接口返回码和路由元数据。</li><li><b>人工标注/审核纠正：</b>核对接口样本包，纠正字段映射、错误码、部门路由字段、重试规则。</li><li><b>优化：</b>根据联调问题修订接口契约、同步状态码和异常码。</li><li><b>模型压缩/量化：</b>本节点为接口层，不直接部署大模型，按 0 人天计。</li></ul></td><td><div class="md-plan"><span>开发 <b>21</b></span><span>部署 <b>12</b></span><span>标注+纠正 <b>3</b></span><span>规则/提示词/模型优化 <b>4</b></span><span>模型压缩/量化 <b>0</b></span><strong>总计 <b>40</b></strong></div></td></tr>
+          <tr><td>3. 杀毒与安全隔离</td><td><b>输入：</b>APPLIES-2（第二代申请及调查便利系统）传入的原始附件包、文件 hash（哈希值/指纹）、案件编号、来源系统信息。<br><b>输出：</b>安全扫描结果、隔离文件清单、可进入后续处理的文件清单、扫描日志。</td><td><div class="scenario"><b>主选：</b>Trellix（客户既有安全软件）+ FastAPI（后端接口框架）+ PostgreSQL（开源关系型数据库）+ Rizhiyi（日誌易安全日志平台）。<span class="line">杀毒独立于内容解析，不参与文件分类和字段抽取；只决定文件是否允许进入后续处理链路。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>自动记录扫描通过/隔离/失败、病毒特征、文件 hash（哈希值/指纹）、来源系统和案件编号。</li><li><b>人工标注/审核纠正：</b>安全或运维人员复核误报、隔离释放、扫描失败重试和异常文件处理结论。</li><li><b>优化：</b>调整杀毒接入、隔离策略、失败重试、审计字段和告警规则。</li><li><b>模型压缩/量化：</b>本节点不涉及模型，按 0 人天计。</li></ul></td><td><div class="md-plan"><span>开发 <b>6</b></span><span>部署 <b>10</b></span><span>标注+纠正 <b>2</b></span><span>规则/提示词/模型优化 <b>2</b></span><span>模型压缩/量化 <b>0</b></span><strong>总计 <b>20</b></strong></div></td></tr>
+          <tr><td>4. 文件检查、清洗与材料分类</td><td><b>输入：</b>杀毒通过的 PDF（便携式文档格式）/JPG（图片格式）/PNG（图片格式）/TIFF（扫描图像格式）/DOCX（Word 文档）/XLSX（Excel 表格）、文件元数据、申请类别、材料规则库。<br><b>输出：</b>清洗后的文件包、页级图片、质量报告、材料类别、缺件/错件/重复清单、低置信度复核队列、初步受理部门候选。</td><td><div class="scenario"><b>主选：</b>PyMuPDF（PDF 解析/渲染库）+ LibreOffice（办公文档转换工具）+ OpenCV（图像处理库）+ PaddleOCR 3.x（飞桨开源文档智能框架）+ Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）+ LangGraph（工作流编排框架）。<span class="line">先检查损坏、加密、重复、缺页、低清晰度和方向异常，再做轻量内容识别，判断是什么材料并完成文件分类。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>自动识别文件损坏/加密/重复/缺页、MIME（文件媒体类型）、原生/扫描型 PDF（便携式文档格式）、清晰度、倾斜度、表格编号、标题关键词、材料类别和缺件风险。</li><li><b>人工标注/审核纠正：</b>标注员确认材料类别、文件可用性、错传/重复/缺件判断，纠正混合 PDF（便携式文档格式）、低质量照片、同一文件多材料等错分。</li><li><b>优化：</b>调整清洗规则、文件分流阈值、分类提示词、置信度阈值和部门候选规则。</li><li><b>模型压缩/量化：</b>如客户 GPU（图形处理器）显存不足，对 Qwen3.6（通义千问3.6）分类提示流启用 vLLM（大模型高性能推理框架）量化加载，并回归分类准确率。</li></ul></td><td><div class="md-plan"><span>开发 <b>29</b></span><span>部署 <b>8</b></span><span>标注+纠正 <b>17</b></span><span>规则/提示词/模型优化 <b>12</b></span><span>模型压缩/量化 <b>4</b></span><strong>总计 <b>70</b></strong></div></td></tr>
+          <tr><td>5. KIE（关键信息抽取）字段抽取</td><td><b>输入：</b>已分类材料、清洗后的页面图片、原生 PDF（便携式文档格式）文本层、表格页、申请表字段模板。<br><b>输出：</b>字段 JSON（结构化数据格式）、表格 JSON（结构化数据格式）、证据坐标、置信度、字段缺失/冲突提示。</td><td><div class="scenario"><b>主选：</b>PaddleOCR 3.x（飞桨开源文档智能框架，含 PaddleOCR-VL-1.5（文档解析视觉语言模型）、PP-OCRv5（文字识别模型）、PP-StructureV3（版面结构化工具））+ Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）+ Label Studio（标注平台）。<span class="line">第 4 节只做足够分类的轻量内容识别；本节点按材料类别做深度字段抽取，服务后续规则核验和草稿生成。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>OCR（文字识别）自动生成文本框、表格结构、字段名和值、字段置信度和证据坐标。</li><li><b>人工标注/审核纠正：</b>纠正文字符号、表格单元格、字段边界和值，重点覆盖姓名、证件号、金额、日期、关系、雇主/学校。</li><li><b>优化：</b>用错例优化 OCR（文字识别）阈值、字段抽取提示词；样本足够时做 LoRA（轻量微调）。</li><li><b>模型压缩/量化：</b>对 PaddleOCR-VL-1.5（文档解析视觉语言模型）和 Qwen3.6（通义千问3.6）做显存、吞吐、准确率回归；只有压缩后字段准确率可接受才上线量化权重。</li></ul></td><td><div class="md-plan"><span>开发 <b>30</b></span><span>部署 <b>12</b></span><span>标注+纠正 <b>20</b></span><span>规则/提示词/模型优化 <b>12</b></span><span>模型压缩/量化 <b>6</b></span><strong>总计 <b>80</b></strong></div></td></tr>
+          <tr><td>6. 专项识别与确定性校验</td><td><b>输入：</b>护照、HKID（香港身份证）、照片、签名/印章、二维码/条码、金额表格。<br><b>输出：</b>MRZ（护照机读区，护照个人资料页底部两行由大写字母、数字和 &lt; 组成的编码区）/HKID（香港身份证）校验、照片合规、章签疑点、二维码解析、金额核对。</td><td><div class="scenario"><b>主选：</b>ICAO 9303（国际机读旅行证件标准）规则实现 + HKID checksum（香港身份证校验位算法）+ ZXing（二维码/条码解码工具）+ OpenCV（图像处理库）+ Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）。<span class="line">MRZ（护照机读区）解析是软件识别护照底部两行机读码并校验，不是必须接入护照机读机器；专项疑点会同步给对应受理部门，不直接作为自动拒批依据。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>系统标出 MRZ（护照机读区，护照个人资料页底部两行由大写字母、数字和 &lt; 组成的编码区）、HKID（香港身份证）、二维码、签名/印章区域、照片质量和金额字段。</li><li><b>人工标注/审核纠正：</b>复核证件解析、章签位置、照片合规、金额合计，审核算法误报样本。</li><li><b>优化：</b>调整校验规则、图像阈值和疑点提示词。</li><li><b>模型压缩/量化：</b>Qwen3.6（通义千问3.6）只用于疑点解释；如资源不足，量化后需回归误报率和漏报率。</li></ul></td><td><div class="md-plan"><span>开发 <b>20</b></span><span>部署 <b>8</b></span><span>标注+纠正 <b>15</b></span><span>规则/提示词/模型优化 <b>12</b></span><span>模型压缩/量化 <b>3</b></span><strong>总计 <b>58</b></strong></div></td></tr>
+          <tr><td>7. 规则引擎、RAG（检索增强生成）与跨文件核验</td><td><b>输入：</b>Canonical JSON（统一结构化数据格式）、专项校验结果、政策索引、原文证据、部门路由表。<br><b>输出：</b>一致性结论、政策引用、风险标记、证据链、受理部门确认结果。</td><td><div class="scenario"><b>主选：</b>LangGraph（工作流编排框架）+ OpenSearch（全文/向量检索引擎）+ Qwen3-Embedding-8B（通义千问向量模型）+ Qwen3-Reranker-8B（通义千问重排序模型）+ Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）。<span class="line">LangGraph（工作流编排框架）统一编排“规则核验 -> 部门路由 -> 邮件草稿 -> 人工反馈”，不新增独立路由引擎。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>系统输出一致/不一致判断、冲突字段、引用条款、证据片段和受理部门候选。</li><li><b>人工标注/审核纠正：</b>业务人员确认正确事实、裁决冲突字段、纠正错误条款引用和错误部门路由。</li><li><b>优化：</b>修订规则、检索查询、提示词、证据排序和部门路由条件。</li><li><b>模型压缩/量化：</b>对 Qwen3-Embedding-8B（通义千问向量模型）和 Qwen3-Reranker-8B（通义千问重排序模型）做批量向量化压测；如超显存，启用量化或降低批大小，并验证召回率。</li></ul></td><td><div class="md-plan"><span>开发 <b>18</b></span><span>部署 <b>7</b></span><span>标注+纠正 <b>18</b></span><span>规则/提示词/模型优化 <b>12</b></span><span>模型压缩/量化 <b>4</b></span><strong>总计 <b>59</b></strong></div></td></tr>
+          <tr><td>8. Intelligent Minutes（智能审批纪要）/邮件初稿草拟</td><td><b>输入：</b>分类/字段/核验结果、政策引用、证据链、受理部门、DOCX（Word 文档）模板、邮件模板。<br><b>输出：</b>Minutes（审批纪要）草稿、邮件初稿、证据引用、低置信度段落、待部门确认项。</td><td><div class="scenario"><b>主选：</b>Qwen3.6-35B-A3B（通义千问3.6开源大语言模型） + vLLM（大模型高性能推理框架）+ docxtpl（Word 模板渲染工具）+ Jinja2（文本模板引擎）+ LangGraph（工作流编排框架）。<span class="line">同一个 Qwen3.6（通义千问3.6）模型生成 Minutes（审批纪要）和邮件初稿；邮件模板按受理部门配置，输出时必须带证据引用、草稿状态和同步对象。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>模型按部门模板生成 Minutes（审批纪要）草稿、补件/追问邮件初稿，并自动填入 UC1（用例1）/UC2（用例2）结果。</li><li><b>人工标注/审核纠正：</b>Officer（审批人员）或受理部门修改事实、措辞、结论、证据引用和邮件语气，标记可接受/需重写/事实错误/部门错误。</li><li><b>优化：</b>基于修订稿优化提示词、邮件模板变量、生成约束和部门专用措辞；样本足够时做 LoRA（轻量微调）。</li><li><b>模型压缩/量化：</b>对 Qwen3.6（通义千问3.6）生成链路做量化、streaming output（流式输出）压测和草稿质量回归，避免压缩后出现事实遗漏或措辞退化。</li></ul></td><td><div class="md-plan"><span>开发 <b>18</b></span><span>部署 <b>6</b></span><span>标注+纠正 <b>14</b></span><span>规则/提示词/模型优化 <b>7</b></span><span>模型压缩/量化 <b>5</b></span><strong>总计 <b>50</b></strong></div></td></tr>
+          <tr><td>9. Officer（入境处审批人员）/受理部门审阅与反馈闭环</td><td><b>输入：</b>AI（人工智能）结果、原文高亮、Minutes（审批纪要）草稿、邮件初稿、异常清单、部门路由结果。<br><b>输出：</b>采纳/驳回/修改记录、邮件草稿状态、纠正字段、错例样本。</td><td><div class="scenario"><b>主选：</b>APPLIES-2（第二代申请及调查便利系统）既有工作流界面 + FastAPI（后端接口框架）反馈/同步接口 + PostgreSQL（开源关系型数据库）反馈库 + Label Studio（标注平台）标注后台。<span class="line">默认不新建独立审批工作台；重点补齐“同步到受理部门、接收部门审核状态、回写邮件草稿状态”。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>自动展示 AI（人工智能）结果、置信度、原文高亮、邮件初稿和建议处理意见。</li><li><b>人工标注/审核纠正：</b>Officer（审批人员）/受理部门点击采纳/驳回/修改并填写错误类型；操作即形成反馈标注。</li><li><b>优化：</b>把反馈同步到规则、部门路由、邮件模板、提示词、评测集和必要的微调数据。</li><li><b>模型压缩/量化：</b>本节点沉淀反馈数据，不直接做模型压缩，按 0 人天计。</li></ul></td><td><div class="md-plan"><span>开发 <b>17</b></span><span>部署 <b>7</b></span><span>标注+纠正 <b>6</b></span><span>规则/提示词/模型优化 <b>5</b></span><span>模型压缩/量化 <b>0</b></span><strong>总计 <b>35</b></strong></div></td></tr>
+          <tr><td>10. 部署、监控、安全合规</td><td><b>输入：</b>容器镜像、模型权重、日志、指标、告警规则、部门同步接口日志。<br><b>输出：</b>本地私有化服务、监控告警、审计日志、回滚方案。</td><td><div class="scenario"><b>主选：</b>Docker（容器化部署工具）+ vLLM（模型推理服务）+ LLM Compressor（大模型压缩工具）+ OpenTelemetry（链路追踪标准）+ Trellix（既有安全软件）/Rizhiyi（日誌易安全日志平台）/IBM Netcool（既有监控系统）。<span class="line">部门同步失败、邮件草稿回写失败、量化模型延迟/准确率异常必须进入日志和告警。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>监控自动标记延迟异常、失败请求、低置信度样本、部门同步失败和模型漂移迹象。</li><li><b>人工标注/审核纠正：</b>运维/技术人员确认告警是否真实，区分系统故障、样本质量问题、模型误判、路由配置错误。</li><li><b>优化：</b>调整资源配额、批处理参数、告警阈值、同步重试和漂移规则。</li><li><b>模型压缩/量化：</b>完成 Qwen3.6（通义千问3.6）、Qwen3-Embedding（通义千问向量模型）、PaddleOCR-VL（文档解析视觉语言模型）的量化包制作、容器镜像固化、性能压测、准确率回归和回滚方案。</li></ul></td><td><div class="md-plan"><span>开发 <b>14</b></span><span>部署 <b>15</b></span><span>标注+纠正 <b>3</b></span><span>规则/提示词/模型优化 <b>8</b></span><span>模型压缩/量化 <b>8</b></span><strong>总计 <b>48</b></strong></div></td></tr>
+          <tr><td>11. PM（项目管理）、SIT/UAT（系统集成测试/用户验收测试）、文档与培训</td><td><b>输入：</b>需求、接口契约、测试样本、部门路由样本、邮件模板、UAT（用户验收测试）问题单。<br><b>输出：</b>验收报告、准确率报告、部门同步测试报告、操作手册、运维手册、培训材料。</td><td><div class="scenario"><b>主选：</b>测试脚本 + 准确率评测表 + API（应用程序接口）文档 + 部门路由矩阵 + 邮件模板说明 + 运维手册。<span class="line">新增部门同步和邮件初稿 UAT（用户验收测试）用例；量化模型需纳入同一套验收报告。</span></div></td><td><ul class="label-work"><li><b>机器预标注：</b>测试系统记录用例通过/失败、接口错误、部门路由准确率、邮件草稿可用率。</li><li><b>人工标注/审核纠正：</b>UAT（用户验收测试）人员确认问题是否有效，补充复现步骤、期望结果、业务影响和验收结论。</li><li><b>优化：</b>根据 UAT（用户验收测试）结果修正规则、部门路由、邮件模板、提示词、接口和文档。</li><li><b>模型压缩/量化：</b>本节点只复核量化后的验收结果，不单独追加压缩工作，按 0 人天计。</li></ul></td><td><div class="md-plan"><span>开发 <b>35</b></span><span>部署 <b>5</b></span><span>标注+纠正 <b>10</b></span><span>规则/提示词/模型优化 <b>10</b></span><span>模型压缩/量化 <b>0</b></span><strong>总计 <b>60</b></strong></div></td></tr>
+          <tr><td colspan="4"><b>合计</b></td><td><div class="md-plan"><span>开发 <b>218</b></span><span>部署 <b>94</b></span><span>标注+纠正 <b>120</b></span><span>规则/提示词/模型优化 <b>88</b></span><span>模型压缩/量化 <b>30</b></span><strong>总计 <b>550</b></strong></div></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>统一技术栈与复用关系</h2>
+      <p class="note">本节站在专业工程团队口径，只列主选，不列同场景备选。部门路由与邮件初稿同步不新增独立模型，复用规则库、LangGraph（工作流编排框架）、FastAPI（后端接口框架）和同一套 Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）。PaddleOCR 3.x（飞桨开源文档智能框架）属于文档解析主框架，Qwen3-Embedding（通义千问向量模型）属于检索主模型；杀毒节点不复用模型，文件分类和 KIE（关键信息抽取）按能力域复用模型。</p>
+      <table>
+        <thead><tr><th>能力域</th><th>唯一主选</th><th>复用节点</th><th>为什么选</th><th>与 RFI/既有系统关系</th></tr></thead>
+        <tbody>
+          <tr><td>后端接口与任务编排</td><td>FastAPI（后端接口框架） + RabbitMQ（消息队列） + LangGraph（工作流编排框架）</td><td>2、4、7、8、9、11</td><td>FastAPI（后端接口框架）负责标准接口、反馈接口、部门同步接口；RabbitMQ（消息队列）负责异步削峰和同步重试；LangGraph（工作流编排框架）负责 AI（人工智能）流程状态、部门路由、重试和证据链。</td><td>承接 APPLIES-2 主动发起的 service request（服务请求）；不直接读取 ImmD 内部系统库。</td></tr>
+          <tr><td>模型推理服务</td><td>vLLM（大模型高性能推理框架） + Qwen3.6-35B-A3B（通义千问3.6开源大语言模型）</td><td>4、5、6、7、8、10</td><td>同一个大语言模型覆盖材料分类解释、字段理解、疑点说明、Minutes（审批纪要）和邮件初稿草拟；图像/PDF（便携式文档格式）结构化先交给 PaddleOCR 3.x（飞桨开源文档智能框架）。</td><td>匹配 RFI（询价文件）对 OpenAI-compatible API（兼容 OpenAI 人工智能接口格式）、streaming/non-streaming output（流式/非流式输出）和 Docker（容器）部署的要求。</td></tr>
+          <tr><td>OCR 与文档结构化</td><td>PaddleOCR 3.x（飞桨开源文档智能框架，含 PaddleOCR-VL-1.5（文档解析视觉语言模型）、PP-OCRv5（文字识别模型）、PP-StructureV3（版面结构化工具））</td><td>4、5、6</td><td>一个框架覆盖中英文 OCR（文字识别）、版面分析、表格结构、文档转 JSON（结构化数据格式）/Markdown（轻量标记文本）和图片页理解；第 4 节用于轻量内容识别和分类，第 5 节用于深度字段抽取。</td><td>作为 AI 平台内部能力，不替代客户文件系统；输出结构化结果给 APPLIES-2。</td></tr>
+          <tr><td>部门路由与同步</td><td>PostgreSQL（开源关系型数据库）规则表 + LangGraph（工作流编排框架）+ FastAPI（后端接口框架）</td><td>1、2、5、7、8、9、11</td><td>部门路由是业务规则，不应训练成黑盒模型；规则表管映射，LangGraph（工作流编排框架）管流程，FastAPI（后端接口框架）管同步和回写。</td><td>同步对象为 APPLIES-2 业务队列、受理部门邮箱组或客户既有工作流系统，具体以 ImmD 内部配置为准。</td></tr>
+          <tr><td>PDF/Office/图像预处理</td><td>PyMuPDF（PDF 解析/渲染库） + LibreOffice（办公文档转换工具） + OpenCV（图像处理库）</td><td>4、5、6</td><td>PyMuPDF 统一 PDF（便携式文档格式）文本和渲染，LibreOffice 负责 Office（办公文档）转换，OpenCV 复用于图像质量和专项识别预处理。</td><td>位于杀毒之后，处理后的临时文件按 RFI（询价文件）数据清除要求删除。</td></tr>
+          <tr><td>政策检索与向量检索</td><td>OpenSearch（全文/向量检索引擎） + Qwen3-Embedding-8B（通义千问向量模型） + Qwen3-Reranker-8B（通义千问重排序模型）</td><td>1、7、8</td><td>OpenSearch（全文/向量检索引擎）同时支持全文检索和向量 k-NN（近邻搜索）；Qwen3-Embedding（通义千问向量模型）负责中英政策与材料语义召回，Qwen3-Reranker（通义千问重排序模型）负责证据排序。</td><td>作为 AI 知识库索引，不直接连接 ImmD 内部系统数据库。</td></tr>
+          <tr><td>规则、状态与反馈数据</td><td>PostgreSQL（开源关系型数据库）</td><td>1、2、5、7、9、11</td><td>保存规则版本、任务状态、字段结果、部门路由、邮件草稿状态、人工反馈和审计摘要。</td><td>只保存 AI 处理所需数据和审计摘要；Other ImmD Systems（其他入境处系统）临时数据按 RFI（询价文件）清除。</td></tr>
+          <tr><td>标注与人工反馈</td><td>Label Studio（标注平台）</td><td>4、5、6、7、8、9、11</td><td>统一承接 OCR（文字识别）修正、字段抽取、分类、问答、Minutes（审批纪要）修改、邮件草稿修改和部门路由错误反馈。</td><td>Officer（审批人员）和受理部门的操作可同步成标注数据，Label Studio（标注平台）作为后台标注与质检平台。</td></tr>
+          <tr><td>模型压缩与量化</td><td>vLLM（大模型高性能推理框架）量化能力 + LLM Compressor（大模型压缩工具）</td><td>4、5、6、7、8、10、11</td><td>不改变主模型，只在客户本地 GPU（图形处理器）显存或吞吐不足时做 AWQ（激活感知权重量化）/FP8（8位浮点）等压缩，并做准确率回归。</td><td>减少本地私有化部署的硬件压力；量化模型版本、准确率、延迟和回滚方案纳入审计。</td></tr>
+          <tr><td>实验与持续优化</td><td>MLflow（模型实验管理工具） + PEFT/LoRA（参数高效微调/轻量微调方法）</td><td>5、7、8、11</td><td>先优化规则、提示词、部门路由和邮件模板；只有样本足够且收益明确时，再用 LoRA 做轻量微调。</td><td>支撑 RFI 要求的 OCR/AI 模型 review（复核）、调优、训练，但不在首期强行承诺大规模训练。</td></tr>
+          <tr><td>安全、日志、监控</td><td>Trellix（既有安全软件） + Rizhiyi（日誌易/SIEM 安全日志平台） + IBM Netcool（既有监控） + OpenTelemetry（链路追踪标准）</td><td>3、10、11</td><td>第 3 节独立承接杀毒和隔离；部门同步、邮件草稿回写、审核状态和量化模型性能变化都要纳入日志和审计。</td><td>直接对应 RFI Appendix C（询价文件附录 C）里的既有软件清单。</td></tr>
+          <tr><td>结果模板与文档/邮件生成</td><td>docxtpl（Word 模板渲染工具） + Jinja2（文本模板引擎）</td><td>8、11</td><td>docxtpl 负责 DOCX（Word 文档）模板，Jinja2 负责邮件文本模板；两者只做模板渲染，不承担复杂推理。</td><td>输出 Minutes（审批纪要）草稿、邮件初稿和补件/追问建议，供 APPLIES-2 或对应受理部门审阅。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3 个月路线图</h2>
+      <div class="timeline">
+        <div class="phase"><span class="week">第 1-2 周</span><b>SA&D（系统分析与设计） + 规则</b><p>接口契约、政策/材料矩阵、样本清单、部署准备、GPU（图形处理器）资源确认和量化策略确认。</p></div>
+        <div class="phase"><span class="week">第 3-5 周</span><b>UC1（用例1：自动文件分类）主链路</b><p>杀毒、安全隔离、损坏检查、文件清洗、轻量内容识别、自动分类、缺件报表。</p></div>
+        <div class="phase"><span class="week">第 6-8 周</span><b>UC2（用例2：智能数据核验）核验</b><p>KIE（关键信息抽取）、专项识别、跨文件规则、政策 RAG（检索增强生成）。</p></div>
+        <div class="phase"><span class="week">第 9-10 周</span><b>UC3（用例3：智能审批纪要） + UC4（用例4：部门同步/邮件初稿）</b><p>Minutes（审批纪要）草稿、邮件初稿、受理部门同步、Officer（入境处审批人员）反馈。</p></div>
+        <div class="phase"><span class="week">第 11-13 周</span><b>UAT（用户验收测试） + 移交</b><p>评测、压测、修复、文档、培训、验收。</p></div>
+      </div>
+    </section>
+
+    <section class="two-col">
+      <div>
+        <h2>标注与调优范围</h2>
+        <table class="tight">
+          <thead><tr><th>数据集</th><th>建议样本量</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>分类金标</td><td>1,000-2,000 附件</td><td>UC1（用例1：自动文件分类）分类准确率与 few-shot（少量样例提示）。</td></tr>
+            <tr><td>KIE（关键信息抽取）字段标注</td><td>2,000-5,000 文档</td><td>表格、证件、合约字段抽取。</td></tr>
+            <tr><td>章签/人脸样本</td><td>每类 500-2,000</td><td>专项识别阈值和误报率。</td></tr>
+            <tr><td>Minutes（审批纪要）样稿</td><td>100-300 对</td><td>模板生成和风格校准。</td></tr>
+            <tr><td>政策/材料规则</td><td>6 类人群 × 12 类材料</td><td>完整性、合法性、政策 RAG（检索增强生成）。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h2>主要风险</h2>
+        <table class="tight">
+          <thead><tr><th>风险</th><th>建议口径</th></tr></thead>
+          <tbody>
+            <tr><td>样本/标注拿不到</td><td>只能交付功能 PoC（概念验证），不承诺生产准确率。</td></tr>
+            <tr><td>3 个月范围压缩</td><td>明确为核心人群 + 12 类材料桶试点。</td></tr>
+            <tr><td>印章/签名真伪</td><td>先做定位、清晰度、一致性和疑点标红。</td></tr>
+            <tr><td>On-prem（本地私有化部署）GPU（图形处理器）资源不足或晚到</td><td>设备、网络、账号、样本列为客户侧里程碑；如 GPU 显存不足，必须启用模型压缩/量化并重新做准确率回归。</td></tr>
+            <tr><td>政策频繁变化</td><td>规则配置化 + RAG（检索增强生成）知识库版本化。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>依据来源</h2>
+      <ol class="source-list">
+        <li>本地询价材料：docs/询价材料/CMHK_RFI_Spec_Extract_SW_Partner.docx（本地文件路径）</li>
+        <li>本地询价材料：docs/询价材料/IMMD_APPLIES2_AI_RFI_Briefing_SW_Partner_3.pdf（本地文件路径）</li>
+        <li>本地询价材料：docs/询价材料/CMHK_RFQ_SW_Partner_ImmD_APPLIES2.xlsx（本地文件路径）</li>
+        <li><a href="https://github.com/QwenLM/Qwen3.6">Qwen3.6（通义千问3.6）官方 GitHub（代码托管平台）</a></li>
+        <li><a href="https://github.com/QwenLM/Qwen3-Embedding">Qwen3-Embedding（通义千问向量模型）官方 GitHub（代码托管平台）</a></li>
+        <li><a href="https://github.com/PaddlePaddle/PaddleOCR">PaddleOCR（飞桨文字识别框架）官方 GitHub（代码托管平台）</a></li>
+        <li><a href="https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.5">PaddleOCR-VL-1.5（文档解析视觉语言模型）Hugging Face（模型托管平台）模型卡</a></li>
+        <li><a href="https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html">vLLM（大模型高性能推理框架）OpenAI-compatible Server（兼容 OpenAI 接口服务）文档</a></li>
+        <li><a href="https://docs.vllm.ai/en/stable/features/quantization/">vLLM（大模型高性能推理框架）Quantization（量化）文档</a></li>
+        <li><a href="https://docs.vllm.ai/projects/llm-compressor/en/latest/">LLM Compressor（大模型压缩工具）官方文档</a></li>
+        <li><a href="https://docs.opensearch.org/latest/vector-search/vector-search-techniques/index/">OpenSearch（全文/向量检索引擎）Vector Search（向量检索）文档</a></li>
+        <li><a href="https://docs.langchain.com/oss/python/langgraph/durable-execution">LangGraph（工作流编排框架）Durable Execution（持久执行）文档</a></li>
+        <li><a href="https://fastapi.tiangolo.com/">FastAPI（后端接口框架）官方文档</a></li>
+        <li><a href="https://www.rabbitmq.com/documentation.html">RabbitMQ（消息队列）官方文档</a></li>
+        <li><a href="https://www.postgresql.org/docs/">PostgreSQL（开源关系型数据库）官方文档</a></li>
+        <li><a href="https://pymupdf.readthedocs.io/">PyMuPDF（PDF 解析/渲染库）官方文档</a></li>
+        <li><a href="https://docs.opencv.org/">OpenCV（图像处理库）官方文档</a></li>
+        <li><a href="https://labelstud.io/">Label Studio（标注平台）官方文档</a></li>
+        <li><a href="https://mlflow.org/docs/latest/index.html">MLflow（模型实验管理工具）官方文档</a></li>
+        <li><a href="https://huggingface.co/docs/peft/index">PEFT/LoRA（参数高效微调/轻量微调方法）官方文档</a></li>
+        <li><a href="https://opentelemetry.io/docs/">OpenTelemetry（链路追踪标准）官方文档</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/GEP.html">ImmD（香港入境事务处）General Employment Policy（一般就业政策）</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/study.html">ImmD（香港入境事务处）Students（学生签证/来港就读）</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/residence_as_dependant.html">ImmD（香港入境事务处）Dependants（受养人）</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/foreign_domestic_helpers.html">ImmD（香港入境事务处）Foreign Domestic Helpers（外籍家庭佣工）</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/newcies.html">ImmD（香港入境事务处）New Capital Investment Entrant Scheme（新资本投资入境计划）</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/quality_migrant_admission_scheme.html">ImmD（香港入境事务处）Quality Migrant Admission Scheme（优秀人才入境计划）</a></li>
+        <li><a href="https://www.immd.gov.hk/eng/services/visas/TTPS.html">ImmD（香港入境事务处）Top Talent Pass Scheme（高端人才通行证计划）</a></li>
+      </ol>
+    </section>
+  </div>
+</body>
+</html>

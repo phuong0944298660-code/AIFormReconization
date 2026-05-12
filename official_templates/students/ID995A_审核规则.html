@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ID995A 来港就读申请表审核规则</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17202a;
+        --muted: #5f6f7f;
+        --line: #d8e0e7;
+        --panel: #f7f9fb;
+        --accent: #0057a8;
+        --danger: #b42318;
+        --warn: #a15c00;
+        --ok: #087443;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Microsoft YaHei", "Noto Sans SC", sans-serif;
+        color: var(--ink);
+        background: #fff;
+        line-height: 1.55;
+      }
+
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 42px 28px 72px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 30px;
+        margin-bottom: 12px;
+      }
+
+      h2 {
+        font-size: 22px;
+        margin: 38px 0 14px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--line);
+      }
+
+      h3 {
+        font-size: 17px;
+        margin: 24px 0 8px;
+      }
+
+      p {
+        margin: 8px 0;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+        margin: 18px 0 28px;
+      }
+
+      .meta div,
+      .note,
+      .source {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 6px;
+        padding: 12px 14px;
+      }
+
+      .note {
+        border-left: 4px solid var(--accent);
+      }
+
+      .source {
+        margin-top: 18px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0 22px;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 10px 12px;
+        vertical-align: top;
+        text-align: left;
+        word-break: break-word;
+      }
+
+      th {
+        background: #eef3f7;
+        font-weight: 700;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .tag.blocker {
+        color: var(--danger);
+        background: #fff0ed;
+      }
+
+      .tag.conditional {
+        color: var(--warn);
+        background: #fff7e8;
+      }
+
+      .tag.manual {
+        color: var(--accent);
+        background: #eef6ff;
+      }
+
+      .tag.pass {
+        color: var(--ok);
+        background: #eaf8f0;
+      }
+
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ID995A 来港就读申请表（申请人）审核规则</h1>
+      <p>
+        本文件用于 demo 的 OCR/规则引擎初始规则库。它不是入境处正式审批结论；最终审批仍由香港入境事务处按个案和当时政策酌情决定。
+      </p>
+
+      <section class="meta" aria-label="规则元数据">
+        <div><strong>表格：</strong>ID 995A (06/2024)，来港就读申请表（由申请人填写）</div>
+        <div><strong>规则整理日期：</strong>2026-05-11</div>
+        <div><strong>主要来源：</strong>香港入境事务处官方表格页、学生签证服务页、ID(E)996 指南</div>
+      </section>
+
+      <div class="note">
+        <strong>Demo 处理原则：</strong>能从 ID995A PDF 本身识别的项目按“通过/不通过”自动判断；取录信、经济证明、监护人同意书、住宿证明、ID995B 等随附材料不能从单份 ID995A
+        直接证明，系统会作为“条件材料”要求用户在上传时勾选或由后续材料识别模块补充。
+      </div>
+
+      <h2>一、资格和适用范围</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 150px">规则 ID</th>
+            <th>审核规则</th>
+            <th style="width: 150px">Demo 处理</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ELG-001</td>
+            <td>申请人须已获符合要求的香港学校/院校取录，并持有取录信。</td>
+            <td><span class="tag blocker">不通过</span> 未提供取录信时阻断。</td>
+          </tr>
+          <tr>
+            <td>ELG-002</td>
+            <td>申请人须能负担在港学费、生活费及住宿费，不应依靠工作或公帑。</td>
+            <td><span class="tag blocker">不通过</span> 财务项目空白或应附经济证明而未附时阻断。</td>
+          </tr>
+          <tr>
+            <td>ELG-003</td>
+            <td>小学申请年龄通常为 5 岁 8 个月至 11 岁；中学申请年龄通常为 20 岁以下。</td>
+            <td><span class="tag manual">人工复核</span> 需要结合课程类别和出生日期。</td>
+          </tr>
+          <tr>
+            <td>ELG-004</td>
+            <td>部分国家/地区或身份类别有额外限制或只可申请指定课程类型。</td>
+            <td><span class="tag manual">人工复核</span> OCR 识别国籍/原居地后提示复核。</td>
+          </tr>
+          <tr>
+            <td>ELG-005</td>
+            <td>所有申请仍须符合一般入境规定，例如有效旅行证件、无刑事或保安问题、不会成为香港负担。</td>
+            <td><span class="tag conditional">条件</span> 表格声明出现不良记录时标为高风险复核。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>二、ID995A 表格完整性</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 150px">规则 ID</th>
+            <th>必检位置</th>
+            <th>审核规则</th>
+            <th style="width: 150px">严重度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A1-001</td>
+            <td>第 1 项个人资料</td>
+            <td>英文姓、英文名、性别、出生日期、出生地点、国籍/原居地或定居地、婚姻/关系状况、旅行证件资料、联系方式、现时住址应填写。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A1-002</td>
+            <td>第 1 项旅行证件</td>
+            <td>须提供有效旅行证件类别、号码、签发地点/日期、届满日期；如内地居民未获发旅行证件，须至少有内地身份证信息并补交身份证副本。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A1-003</td>
+            <td>第 2 页照片栏</td>
+            <td>须贴上近照；照片大小应不大于 55×45 毫米且不小于 50×40 毫米。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A2-001</td>
+            <td>第 2 项拟来港就读时间</td>
+            <td>拟抵港日期和拟在港逗留时间应填写，并应与课程期合理一致。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A4-001</td>
+            <td>第 4 项拟在港就读资料</td>
+            <td>在港就读学校名称及地址、入读年级/课程应填写，并应与取录信一致。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A5-001</td>
+            <td>第 5 项学历/专业资格</td>
+            <td>应按获取资格日期序列填写教育/专业资格；完全空白需复核。</td>
+            <td><span class="tag conditional">条件</span></td>
+          </tr>
+          <tr>
+            <td>A6-001</td>
+            <td>第 6 项生活开支</td>
+            <td>学费、住宿、交通膳食、其他费用和总计应填写；总计不能低于分项合计。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A7-001</td>
+            <td>第 7 项经济状况</td>
+            <td>存款、入息或其他经济来源至少一项应填写，并应能覆盖预计费用。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A8-001</td>
+            <td>第 8 项短期课程</td>
+            <td>如过去 12 个月曾在港修读指定短期课程，必须提供课程名称、学校及修读日期。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A9-001</td>
+            <td>第 9 项声明</td>
+            <td>申请人/父母/合法监护人声明必须填写、签署并写明日期；16 岁以下须由父母或合法监护人签署。</td>
+            <td><span class="tag blocker">不通过</span></td>
+          </tr>
+          <tr>
+            <td>A9-002</td>
+            <td>各页下载/影印本确认栏</td>
+            <td>如使用下载或影印本，每页相应确认栏应签名和日期完整。</td>
+            <td><span class="tag conditional">条件</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>三、条件触发材料</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 150px">规则 ID</th>
+            <th>触发条件</th>
+            <th>所需材料</th>
+            <th style="width: 150px">Demo 处理</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DOC-001</td>
+            <td>所有申请</td>
+            <td>ID995A、近照、有效旅行证件副本、取录信。</td>
+            <td><span class="tag blocker">不通过</span> 缺失时阻断。</td>
+          </tr>
+          <tr>
+            <td>DOC-002</td>
+            <td>申请人有香港身份证</td>
+            <td>香港身份证副本。</td>
+            <td><span class="tag conditional">条件</span></td>
+          </tr>
+          <tr>
+            <td>DOC-003</td>
+            <td>申请人不足 18 岁</td>
+            <td>父/母授权保证人或在港亲友作为监护人的同意书，及住宿安排证明。</td>
+            <td><span class="tag blocker">不通过</span> 缺失时阻断。</td>
+          </tr>
+          <tr>
+            <td>DOC-004</td>
+            <td>保证人为取录院校</td>
+            <td>申请人经济状况证明，例如银行结单、存折、税单、薪金证明。</td>
+            <td><span class="tag blocker">不通过</span> 缺失时阻断。</td>
+          </tr>
+          <tr>
+            <td>DOC-005</td>
+            <td>保证人为个人</td>
+            <td>ID995B、保证人身份证/旅行证件、保证人经济证明，以及愿意负担生活费并提供住宿的承诺书。</td>
+            <td><span class="tag blocker">不通过</span> 缺失时阻断。</td>
+          </tr>
+          <tr>
+            <td>DOC-006</td>
+            <td>内地中国居民申请</td>
+            <td>申请须经由取录院校（保证人）向入境处递交；获批后还需内地签发往来港澳通行证及相关赴港签注。</td>
+            <td><span class="tag conditional">条件</span></td>
+          </tr>
+          <tr>
+            <td>DOC-007</td>
+            <td>澳门或台湾居民</td>
+            <td>澳门居民往来香港特别行政区旅游证及澳门身份证副本；台湾居民户籍誊本及台湾身份证副本。</td>
+            <td><span class="tag conditional">条件</span></td>
+          </tr>
+          <tr>
+            <td>DOC-008</td>
+            <td>带同受养人</td>
+            <td>受养人须填妥 ID995A 乙部、附照片、旅行证件副本和关系证明等材料。</td>
+            <td><span class="tag blocker">不通过</span> 已声明受养人但乙部/材料不完整时阻断。</td>
+          </tr>
+          <tr>
+            <td>DOC-009</td>
+            <td>文件并非中文或英文</td>
+            <td>须附经认可人员核证的中文或英文译本。</td>
+            <td><span class="tag manual">人工复核</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>四、结果判定口径</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 160px">结果</th>
+            <th>判定标准</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag pass">可进入递交</span></td>
+            <td>没有阻断项；表格关键栏位、签署、照片及必要条件材料均已识别为齐备。</td>
+          </tr>
+          <tr>
+            <td><span class="tag blocker">整体不通过</span></td>
+            <td>存在任何阻断项，例如必填栏位缺失、照片缺失、未签署、未成年条件材料缺失、取录信或经济证明缺失。</td>
+          </tr>
+          <tr>
+            <td><span class="tag manual">需人工复核</span></td>
+            <td>存在 OCR 置信度不足、资格限制、特殊国籍/身份、声明异常、文件翻译或课程类型等不能仅凭 ID995A 自动确定的事项。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>五、官方来源</h2>
+      <div class="source">
+        <p>
+          <strong>香港入境事务处：</strong>
+          <a href="https://www.immd.gov.hk/hks/forms/forms/id995a.html">ID995A 表格页</a>、
+          <a href="https://www.immd.gov.hk/hks/services/visas/study.html">学生签证/进入许可服务页</a>、
+          <a href="https://www.immd.gov.hk/pdforms/ID995A.pdf">ID995A PDF</a>、
+          <a href="https://www.immd.gov.hk/pdforms/ID%28E%29996.pdf">ID(E)996 Guidebook PDF</a>。
+        </p>
+        <p>
+          关键依据包括：申请资格、必须提名本地保证人、未成年人监护/住宿要求、表格和文件核对清单、所有表格必须妥为签署、内地居民须经取录院校递交，以及入境处可要求额外证明文件。
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

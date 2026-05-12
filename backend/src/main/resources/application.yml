@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+id995a:
+  template-path: ../official_templates/students/ID995A_来港就读申请表_申请人.pdf
+  rules-path: ../official_templates/students/ID995A_审核规则.html
+
+ocr:
+  tesseract:
+    enabled: false
+    language: eng+chi_tra
+    data-path: ""
+
+llm:
+  enabled: ${LLM_ENABLED:false}
+  base-url: ${LLM_BASE_URL:https://apie.zhisuaninfo.com/v1}
+  api-key: ${LLM_API_KEY:}
+  model: ${LLM_MODEL:Qwen3.6-35B-A3B}
+  max-tokens: ${LLM_MAX_TOKENS:2048}
+  timeout-seconds: ${LLM_TIMEOUT_SECONDS:60}
+
+rag:
+  enabled: ${RAG_ENABLED:false}
+  base-url: ${RAG_BASE_URL:http://127.0.0.1:8090}
+  timeout-seconds: ${RAG_TIMEOUT_SECONDS:30}
+  top-k: ${RAG_TOP_K:8}
