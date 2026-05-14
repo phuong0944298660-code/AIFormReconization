@@ -34,6 +34,8 @@ services:
       - RAG_ENABLED=true
       - RAG_BASE_URL=http://rag-service:8090
       - LLM_ENABLED=false
+      - PADDLE_OCR_BASE_URL=http://192.168.20.250:18080
+      - PADDLE_OCR_TIMEOUT_SECONDS=180
     depends_on:
       rag-service:
         condition: service_healthy

@@ -16,13 +16,18 @@ ocr:
     enabled: ${OCR_ENABLED:true}
     language: ${OCR_LANGUAGE:eng+chi_sim+chi_tra}
     data-path: ${TESSDATA_PREFIX:}
+  paddle:
+    base-url: ${PADDLE_OCR_BASE_URL:http://192.168.20.250:18080}
+    timeout-seconds: ${PADDLE_OCR_TIMEOUT_SECONDS:180}
+    top-p: ${PADDLE_OCR_TOP_P:1.0}
+    visualize: ${PADDLE_OCR_VISUALIZE:true}
 
 llm:
   enabled: ${LLM_ENABLED:false}
   base-url: ${LLM_BASE_URL:https://apie.zhisuaninfo.com/v1}
   api-key: ${LLM_API_KEY:}
-  model: ${LLM_MODEL:Qwen3.6-35B-A3B}
-  max-tokens: ${LLM_MAX_TOKENS:2048}
+  model: ${LLM_MODEL:Qwen3-Omni-30B-A3B-Instruct}
+  max-tokens: ${LLM_MAX_TOKENS:256}
   timeout-seconds: ${LLM_TIMEOUT_SECONDS:60}
 
 rag:
